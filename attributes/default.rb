@@ -5,12 +5,13 @@ default["ha"]["available_services"] = [
     "service" => "api",
     "service_type" => "compute"
   },
-  {
-    "role" => "nova-api-ec2",
-    "namespace" => "nova",
-    "service" => "ec2-admin",
-    "service_type" => "ec2"
-  },
+# We done need both of these b/c they are the same role and endpoint (except for path)
+#  {
+#    "role" => "nova-api-ec2",
+#    "namespace" => "nova",
+#    "service" => "ec2-admin",
+#    "service_type" => "ec2"
+#  },
   {
     "role" => "nova-api-ec2",
     "namespace" => "nova",
