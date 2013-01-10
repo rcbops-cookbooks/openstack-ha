@@ -4,18 +4,23 @@ node.set["keepalived"]["shared_addresses"] = true
 # Include default keepalived recipe
 include_recipe "keepalived"
 
-node["vips"].each_value do |vip|
-  vrrp_name = "vi_#{vip.gsub(/\./, '_')}"
-  vrrp_interface = get_if_for_net('public', node)
-  router_id = vip.split(".")[3]
+# set up floating ips
+if node["vips"]
+  node["vips"].each_value do |vip|
+    vrrp_name = "vi_#{vip.gsub(/\./, '_')}"
+    vrrp_interface = get_if_for_net('public', node)
+    router_id = vip.split(".")[3]
 
-  keepalived_vrrp vrrp_name do
-    interface vrrp_interface
-    virtual_ipaddress Array(vip)
-    virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
+    keepalived_vrrp vrrp_name do
+      interface vrrp_interface
+      virtual_ipaddress Array(vip)
+      virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
+    end
   end
 end
 
+
+# set up load balancer
 ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
 
