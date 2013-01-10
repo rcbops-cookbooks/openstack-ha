@@ -8,6 +8,6 @@ version           "1.0.2"
   supports os
 end
 
-%w{ keepalived osops-utils }.each do |dep|
+%w{ haproxy keepalived osops-utils }.each do |dep|
   depends dep
 end

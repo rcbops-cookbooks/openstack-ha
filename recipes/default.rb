@@ -1,5 +1,5 @@
 # Need to enable shared_addresses
-node.set["keepalived"]["shared_addresses"] = true
+# node.set["keepalived"]["shared_address"] = true
 
 # Include default keepalived recipe
 include_recipe "keepalived"
@@ -20,6 +20,12 @@ if node["vips"]
 end
 
 
+# *-*-*-*-*-*-*-*-*-*-* #
+
+
+# Include default haproxy recipe, for loadbalancing
+include_recipe "haproxy::default"
+
 # set up load balancer
 ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
@@ -39,7 +45,7 @@ node["ha"]["available_services"].each do |s|
     # Generate array of host:port real servers
     rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
 
-    keepalived_virtual_server "#{ns}-#{svc}" do
+    haproxy_virtual_server "#{ns}-#{svc}" do
       vs_listen_ip listen_ip
       vs_listen_port listen_port.to_s
       real_servers rs_list
@@ -50,8 +56,7 @@ node["ha"]["available_services"].each do |s|
     when "ec2"
       public_endpoint = get_access_endpoint(role, ns, "ec2-public")
       admin_path = get_settings_by_role(role, ns)['services']['ec2-admin']['path']
-      admin_endpoint = Hash.new()
-      admin_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}"
+      admin_endpoint = {'uri' => "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}" }
     when "identity"
       public_endpoint = get_access_endpoint(role, ns, "service-api")
       admin_endpoint  = get_access_endpoint(role, ns, "admin-api")
