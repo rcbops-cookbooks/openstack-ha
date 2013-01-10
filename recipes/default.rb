@@ -4,10 +4,10 @@ node.set["keepalived"]["shared_addresses"] = true
 # Include default keepalived recipe
 include_recipe "keepalived"
 
-node["vips"].each do |s_name, vip|
+node["vips"].each_value do |vip|
   vrrp_name = "vi_#{vip.gsub(/\./, '_')}"
   vrrp_interface = get_if_for_net('public', node)
-  _, _, _, router_id = vip.split('.')
+  router_id = vip.split(".")[3]
 
   keepalived_vrrp vrrp_name do
     interface vrrp_interface
