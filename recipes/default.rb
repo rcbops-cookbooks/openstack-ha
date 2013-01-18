@@ -4,39 +4,35 @@
 # Include default keepalived recipe
 include_recipe "keepalived"
 
-# set up floating ips
-if node["vips"]
-  node["vips"].each_value do |vip|
-    vrrp_name = "vi_#{vip.gsub(/\./, '_')}"
-    vrrp_interface = get_if_for_net('public', node)
-    router_id = vip.split(".")[3]
-
-    keepalived_vrrp vrrp_name do
-      interface vrrp_interface
-      virtual_ipaddress Array(vip)
-      virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
-    end
-  end
-end
-
-
-# *-*-*-*-*-*-*-*-*-*-* #
-
-
 # Include default haproxy recipe, for loadbalancing
 include_recipe "haproxy::default"
 
-# set up load balancer
 ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
 
+# set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s|
+
   role, ns, svc, svc_type = s["role"], s["namespace"], s["service"], s["service_type"]
 
   Chef::Log.info("Skipping: #{ns}-#{svc}") unless rcb_safe_deref(node, "vips.#{ns}-#{svc}")
 
-  # See if a vip has been defined for this service, if yes create a virtual server definition
+  # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
   if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
+
+    # first configure the vrrp
+    Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
+    vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
+    vrrp_interface = get_if_for_net('public', node)
+    router_id = listen_ip.split(".")[3]
+
+    keepalived_vrrp vrrp_name do
+      interface vrrp_interface
+      virtual_ipaddress Array(listen_ip)
+      virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
+    end
+
+    # now configure the virtual server
     Chef::Log.info("Configuring virtual_server for #{ns}-#{svc}")
 
     # Lookup listen_port from the environment, or fall back to the first searched node running the role
