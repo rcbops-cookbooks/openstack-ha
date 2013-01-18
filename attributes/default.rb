@@ -43,6 +43,12 @@ default["ha"]["available_services"] = [
     "service_type" => "image"
   },
   {
+    "role" => "glance-registry",
+    "namespace" => "glance",
+    "service" => "registry",
+    "service_type" => "image"
+  },
+  {
     "role" => "swift-proxy-server",
     "namespace" => "swift",
     "service" => "proxy",

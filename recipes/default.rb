@@ -65,18 +65,20 @@ node["ha"]["available_services"].each do |s|
       admin_endpoint  = public_endpoint.clone
     end
 
-    keystone_register "Recreate Endpoint" do
-      auth_host ks_admin_endpoint["host"]
-      auth_port ks_admin_endpoint["port"]
-      auth_protocol ks_admin_endpoint["scheme"]
-      api_ver ks_admin_endpoint["path"]
-      auth_token keystone["admin_token"]
-      service_type svc_type
-      endpoint_region node["nova"]["compute"]["region"]
-      endpoint_adminurl admin_endpoint['uri']
-      endpoint_internalurl public_endpoint["uri"]
-      endpoint_publicurl public_endpoint["uri"]
-      action :recreate_endpoint
+    unless "#{ns}-#{svc}" == "glance-registry"
+      keystone_register "Recreate Endpoint" do
+        auth_host ks_admin_endpoint["host"]
+        auth_port ks_admin_endpoint["port"]
+        auth_protocol ks_admin_endpoint["scheme"]
+        api_ver ks_admin_endpoint["path"]
+        auth_token keystone["admin_token"]
+        service_type svc_type
+        endpoint_region node["nova"]["compute"]["region"]
+        endpoint_adminurl admin_endpoint['uri']
+        endpoint_internalurl public_endpoint["uri"]
+        endpoint_publicurl public_endpoint["uri"]
+        action :recreate_endpoint
+      end
     end
   end
   # ********************************************************
