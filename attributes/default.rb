@@ -1,6 +1,6 @@
 default["ha"]["available_services"] = [
   {
-    "role" => "nova-api-os-compute",
+    "roles" => ["nova-api-os-compute"],
     "namespace" => "nova",
     "service" => "api",
     "service_type" => "compute"
