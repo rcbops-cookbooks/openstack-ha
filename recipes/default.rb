@@ -38,7 +38,6 @@ node["ha"]["available_services"].each do |s|
     listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(roles[0], ns, svc)[0]["port"]
 
     # Generate array of host:port real servers
-#    (rs_list = roles.each.inject([]) {|me,r| me << get_realserver_endpoints(r, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} } }).flatten!
     rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
     Chef::Log.debug "realserver list is #{rs_list}"
 
