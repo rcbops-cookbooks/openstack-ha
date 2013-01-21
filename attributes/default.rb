@@ -42,7 +42,7 @@ default["ha"]["available_services"] = [
     "service_type" => "object-store"
   },
   {
-    "roles" => ["glance-registry-master", "glance-registry-client"],
+    "roles" => ["glance-registry"],
     "namespace" => "glance",
     "service" => "registry",
     "service_type" => "image"
