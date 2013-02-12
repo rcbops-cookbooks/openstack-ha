@@ -8,6 +8,6 @@ version           "1.0.4"
   supports os
 end
 
-%w{ haproxy keepalived osops-utils }.each do |dep|
+%w{ haproxy keepalived nova osops-utils }.each do |dep|
   depends dep
 end
