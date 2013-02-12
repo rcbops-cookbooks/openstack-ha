@@ -35,7 +35,7 @@ node["ha"]["available_services"].each do |s|
     Chef::Log.info("Configuring virtual_server for #{ns}-#{svc}")
 
     # Lookup listen_port from the environment, or fall back to the first searched node running the role
-    listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(roles[0], ns, svc)[0]["port"]
+    listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
 
     # Generate array of host:port real servers
     rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
