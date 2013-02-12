@@ -31,7 +31,7 @@ default
 ----
 - Iterates through the list of services provided in the attributes/environment
 - Adds a haproxy config file per service, and uses search to discover the relevant back ends for that service.
-- uses provided vip from the environment to add a floating IP using keepalived (eg node['vips']['glance']['api'] would contain the required VIP to be used for load balancing glance api requests
+- Uses provided vip from the environment to add a floating IP using keepalived (eg node['vips']['glance']['api'] would contain the required VIP to be used for load balancing glance api requests
 
 
 Attributes
@@ -48,13 +48,13 @@ Attributes
 License and Author
 ==================
 
-Author:: Justin Shepherd (<justin.shepherd@rackspace.com>)--
-Author:: Jason Cannavale (<jason.cannavale@rackspace.com>)--
-Author:: Ron Pedde (<ron.pedde@rackspace.com>)--
-Author:: Joseph Breu (<joseph.breu@rackspace.com>)--
-Author:: William Kelly (<william.kelly@rackspace.com>)--
-Author:: Darren Birkett (<darren.birkett@rackspace.co.uk>)--
-Author:: Evan Callicoat (<evan.callicoat@rackspace.com>)--
+Author:: Justin Shepherd (<justin.shepherd@rackspace.com>)  
+Author:: Jason Cannavale (<jason.cannavale@rackspace.com>)  
+Author:: Ron Pedde (<ron.pedde@rackspace.com>)  
+Author:: Joseph Breu (<joseph.breu@rackspace.com>)  
+Author:: William Kelly (<william.kelly@rackspace.com>)  
+Author:: Darren Birkett (<darren.birkett@rackspace.co.uk>)  
+Author:: Evan Callicoat (<evan.callicoat@rackspace.com>)  
 
 Copyright 2012, Rackspace US, Inc.
 
