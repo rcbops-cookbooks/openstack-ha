@@ -9,6 +9,7 @@ include_recipe "haproxy::default"
 
 ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
+haproxy_platform_options = node["haproxy"]["platform"]
 
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s|
@@ -25,10 +26,21 @@ node["ha"]["available_services"].each do |s|
     vrrp_interface = get_if_for_net('public', node)
     router_id = listen_ip.split(".")[3]
 
+    keepalived_chkscript "haproxy" do
+      script "#{haproxy_platform_options["service_bin"]} #{haproxy_platform_options["haproxy_service"]} status"
+      interval 5
+      action :create
+      not_if {File.exists?('/etc/keepalived/conf.d/script_haproxy.conf')}
+    end
+
     keepalived_vrrp vrrp_name do
       interface vrrp_interface
       virtual_ipaddress Array(listen_ip)
       virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
+      track_script "haproxy"
+      notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart"
+      notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop "
+      notify_fault "#{haproxy_platform_options["service_bin"]} haproxy stop"
     end
 
     # now configure the virtual server
