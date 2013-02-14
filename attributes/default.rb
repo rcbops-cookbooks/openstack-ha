@@ -46,5 +46,17 @@ default["ha"]["available_services"] = [
     "namespace" => "glance",
     "service" => "registry",
     "service_type" => "image"
+  },
+  {
+    "role" => "nova-vncproxy",
+    "namespace" => "nova",
+    "service" => "xvpvnc",
+    "service_type" => "compute"
+  },
+  {
+    "role" => "nova-vncproxy",
+    "namespace" => "nova",
+    "service" => "novnc-server",
+    "service_type" => "compute"
   }
 ]
