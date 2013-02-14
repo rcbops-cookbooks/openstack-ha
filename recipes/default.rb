@@ -73,7 +73,11 @@ node["ha"]["available_services"].each do |s|
       admin_endpoint  = public_endpoint.clone
     end
 
-    unless "#{ns}-#{svc}" == "glance-registry"
+    unless "#{ns}-#{svc}" == "glance-registry" ||
+        "#{ns}-#{svc}" == "nova-xvpvnc" ||
+        "#{ns}-#{svc}" == "nova-novnc-server" ||
+        "#{ns}-#{svc}" == "horizon-dash"
+
       keystone_register "Recreate Endpoint" do
         auth_host ks_admin_endpoint["host"]
         auth_port ks_admin_endpoint["port"]

@@ -58,5 +58,11 @@ default["ha"]["available_services"] = [
     "namespace" => "nova",
     "service" => "novnc-server",
     "service_type" => "compute"
+  },
+  {
+    "role" => "horizon-server",
+    "namespace" => "horizon",
+    "service" => "dash",
+    "service_type" => "dash"
   }
 ]
