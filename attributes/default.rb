@@ -54,15 +54,15 @@ default["ha"]["available_services"] = [
     "service_type" => "compute"
   },
   {
-    "role" => "nova-vncproxy",
-    "namespace" => "nova",
-    "service" => "novnc-server",
-    "service_type" => "compute"
+    "role" => "horizon-server",
+    "namespace" => "horizon",
+    "service" => "dash",
+    "service_type" => "dash"
   },
   {
     "role" => "horizon-server",
     "namespace" => "horizon",
-    "service" => "dash",
+    "service" => "dash_ssl",
     "service_type" => "dash"
   }
 ]

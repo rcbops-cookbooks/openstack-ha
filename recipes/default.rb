@@ -76,7 +76,8 @@ node["ha"]["available_services"].each do |s|
     unless "#{ns}-#{svc}" == "glance-registry" ||
         "#{ns}-#{svc}" == "nova-xvpvnc" ||
         "#{ns}-#{svc}" == "nova-novnc-server" ||
-        "#{ns}-#{svc}" == "horizon-dash"
+        "#{ns}-#{svc}" == "horizon-dash" ||
+        "#{ns}-#{svc}" == "horizon-dash_ssl"
 
       keystone_register "Recreate Endpoint" do
         auth_host ks_admin_endpoint["host"]
