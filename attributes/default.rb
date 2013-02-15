@@ -50,7 +50,13 @@ default["ha"]["available_services"] = [
   {
     "role" => "nova-vncproxy",
     "namespace" => "nova",
-    "service" => "xvpvnc",
+    "service" => "novnc-proxy",
+    "service_type" => "compute"
+  },
+  {
+    "role" => "nova-vncproxy",
+    "namespace" => "nova",
+    "service" => "xvpvnc-proxy",
     "service_type" => "compute"
   },
   {

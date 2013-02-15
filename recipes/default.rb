@@ -77,8 +77,8 @@ node["ha"]["available_services"].each do |s|
     end
 
     unless "#{ns}-#{svc}" == "glance-registry" ||
-        "#{ns}-#{svc}" == "nova-xvpvnc" ||
-        "#{ns}-#{svc}" == "nova-novnc-server" ||
+        "#{ns}-#{svc}" == "nova-xvpvnc-proxy" ||
+        "#{ns}-#{svc}" == "nova-novnc-proxy" ||
         "#{ns}-#{svc}" == "horizon-dash" ||
         "#{ns}-#{svc}" == "horizon-dash_ssl"
 
