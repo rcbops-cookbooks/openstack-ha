@@ -54,6 +54,9 @@ node["ha"]["available_services"].each do |s|
     Chef::Log.debug "realserver list is #{rs_list}"
 
     haproxy_virtual_server "#{ns}-#{svc}" do
+      if svc == "dash_ssl"
+        mode "tcp"
+      end
       vs_listen_ip listen_ip
       vs_listen_port listen_port.to_s
       real_servers rs_list
