@@ -12,8 +12,8 @@ Chef 0.10.0 or higher required (for Chef environment use).
 Platforms
 --------
 
-* Ubuntu >= 12.04
 * CentOS >= 6.3
+* Ubuntu >= 12.04
 
 Cookbooks
 ---------
@@ -22,6 +22,7 @@ The following cookbooks are dependencies:
 
 * haproxy
 * keepalived
+* nova
 * osops-utils
 
 Recipes
