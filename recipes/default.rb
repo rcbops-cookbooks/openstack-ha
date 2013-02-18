@@ -15,7 +15,7 @@ haproxy_platform_options = node["haproxy"]["platform"]
 node["ha"]["available_services"].each do |s|
   role, ns, svc, svc_type = s["role"], s["namespace"], s["service"], s["service_type"]
 
-  Chef::Log.info("Skipping: #{ns}-#{svc}") unless rcb_safe_deref(node, "vips.#{ns}-#{svc}")
+  Chef::Log.info("Skipping: #{ns}-#{svc}") if ! rcb_safe_deref(node, "vips.#{ns}-#{svc}") || ! rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
 
   # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
   if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
@@ -62,6 +62,12 @@ node["ha"]["available_services"].each do |s|
       real_servers rs_list
     end
 
+  elsif
+    listen_ip = rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
+    Chef::Log.info("External vip found for #{ns}-#{svc}. Only updating keystone endpoint")
+  end
+
+  unless listen_ip.nil?
     # Need to update keystone endpoint
     case svc_type
     when "ec2"
@@ -75,7 +81,6 @@ node["ha"]["available_services"].each do |s|
       public_endpoint = get_access_endpoint(role, ns, svc)
       admin_endpoint  = public_endpoint.clone
     end
-
     unless "#{ns}-#{svc}" == "glance-registry" ||
         "#{ns}-#{svc}" == "nova-xvpvnc-proxy" ||
         "#{ns}-#{svc}" == "nova-novnc-proxy" ||
