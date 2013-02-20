@@ -37,6 +37,9 @@ node["ha"]["available_services"].each do |s|
       interface vrrp_interface
       virtual_ipaddress Array(listen_ip)
       virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
+      if node["roles"].include?("ha-controller1")
+        state "MASTER"
+      end
       track_script "haproxy"
       notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart"
       notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop "
