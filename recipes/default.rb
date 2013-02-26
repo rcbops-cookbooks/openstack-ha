@@ -27,7 +27,7 @@ include_recipe "keepalived"
 # Include default haproxy recipe, for loadbalancing
 include_recipe "haproxy::default"
 
-ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
+ks_admin_endpoint = get_access_endpoint("keystone-api", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
 haproxy_platform_options = node["haproxy"]["platform"]
 
