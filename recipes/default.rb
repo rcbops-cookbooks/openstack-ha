@@ -58,9 +58,9 @@ node["ha"]["available_services"].each do |s|
       virtual_ipaddress Array(listen_ip)
       virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
       track_script "haproxy"
-      notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart"
-      notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop "
-      notify_fault "#{haproxy_platform_options["service_bin"]} haproxy stop"
+      notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart ; #{haproxy_platform_options["service_bin"]} keystone restart"
+      notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop ; #{haproxy_platform_options["service_bin"]} keystone restart"
+      notify_fault "#{haproxy_platform_options["service_bin"]} haproxy stop ; #{haproxy_platform_options["service_bin"]} keystone restart"
     end
 
     # now configure the virtual server
@@ -75,10 +75,10 @@ node["ha"]["available_services"].each do |s|
 
     haproxy_virtual_server "#{ns}-#{svc}" do
 
-      if "#{ns}-#{svc}" == "horizon-dash_ssl"
+      if "#{ns}-#{svc}" == "horizon-dash_ssl" ||
+         "#{ns}-#{svc}" == "glance-registry"
         mode "tcp"
-      elsif "#{ns}-#{svc}" == "glance-registry" ||
-            "#{ns}-#{svc}" == "horizon-dash" ||
+      elsif "#{ns}-#{svc}" == "horizon-dash" ||
             "#{ns}-#{svc}" == "nova-ec2-public" ||
             "#{ns}-#{svc}" == "nova-novnc-proxy"
         mode "http"
