@@ -78,7 +78,7 @@ node["ha"]["available_services"].each do |s|
       if "#{ns}-#{svc}" == "horizon-dash_ssl"
         mode "tcp"
       elsif "#{ns}-#{svc}" == "glance-registry" ||
-            "#{ns}-#{svc}" == "horizon-dash_ssl" ||
+            "#{ns}-#{svc}" == "horizon-dash" ||
             "#{ns}-#{svc}" == "nova-ec2-public" ||
             "#{ns}-#{svc}" == "nova-novnc-proxy"
         mode "http"
