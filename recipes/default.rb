@@ -128,6 +128,8 @@ node["ha"]["available_services"].each do |s|
         endpoint_adminurl admin_endpoint['uri']
         endpoint_internalurl public_endpoint["uri"]
         endpoint_publicurl public_endpoint["uri"]
+        retries 4
+        retry_delay 5
         action :recreate_endpoint
       end
     end
