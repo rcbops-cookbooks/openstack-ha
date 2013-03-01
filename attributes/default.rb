@@ -1,17 +1,5 @@
 default["ha"]["available_services"] = [
   {
-    "role" => "nova-api-os-compute",
-    "namespace" => "nova",
-    "service" => "api",
-    "service_type" => "compute"
-  },
-  {
-    "role" => "nova-api-ec2",
-    "namespace" => "nova",
-    "service" => "ec2-public",
-    "service_type" => "ec2"
-  },
-  {
     "role" => "keystone-api",
     "namespace" => "keystone",
     "service" => "admin-api",
@@ -22,6 +10,18 @@ default["ha"]["available_services"] = [
     "namespace" => "keystone",
     "service" => "service-api",
     "service_type" => "identity"
+  },
+  {
+    "role" => "nova-api-os-compute",
+    "namespace" => "nova",
+    "service" => "api",
+    "service_type" => "compute"
+  },
+  {
+    "role" => "nova-api-ec2",
+    "namespace" => "nova",
+    "service" => "ec2-public",
+    "service_type" => "ec2"
   },
   {
     "role" => "cinder-api",

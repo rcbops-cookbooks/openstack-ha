@@ -27,7 +27,7 @@ include_recipe "keepalived"
 # Include default haproxy recipe, for loadbalancing
 include_recipe "haproxy::default"
 
-ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
+ks_admin_endpoint = get_access_endpoint("keystone-api", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
 haproxy_platform_options = node["haproxy"]["platform"]
 
@@ -58,9 +58,9 @@ node["ha"]["available_services"].each do |s|
       virtual_ipaddress Array(listen_ip)
       virtual_router_id router_id.to_i  # Needs to be a integer between 0..255
       track_script "haproxy"
-      notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart"
-      notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop "
-      notify_fault "#{haproxy_platform_options["service_bin"]} haproxy stop"
+      notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart ; #{haproxy_platform_options["service_bin"]} keystone restart"
+      notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop ; #{haproxy_platform_options["service_bin"]} keystone restart"
+      notify_fault "#{haproxy_platform_options["service_bin"]} haproxy stop ; #{haproxy_platform_options["service_bin"]} keystone restart"
     end
 
     # now configure the virtual server
@@ -74,9 +74,19 @@ node["ha"]["available_services"].each do |s|
     Chef::Log.debug "realserver list is #{rs_list}"
 
     haproxy_virtual_server "#{ns}-#{svc}" do
-      if svc == "dash_ssl"
+
+      if "#{ns}-#{svc}" == "horizon-dash_ssl"
         mode "tcp"
+      elsif "#{ns}-#{svc}" == "horizon-dash" ||
+            "#{ns}-#{svc}" == "nova-ec2-public" ||
+            "#{ns}-#{svc}" == "swift-proxy" ||
+            "#{ns}-#{svc}" == "glance-registry"
+        mode "http"
+      else
+        mode "http"
+        options ["forwardfor", "httpchk"]
       end
+
       vs_listen_ip listen_ip
       vs_listen_port listen_port.to_s
       real_servers rs_list
