@@ -8,6 +8,8 @@ version           "1.0.5"
   supports os
 end
 
-%w{ haproxy keepalived nova osops-utils }.each do |dep|
+%w{ keepalived nova osops-utils }.each do |dep|
   depends dep
 end
+
+depends "haproxy",  ">= 1.0.5"
