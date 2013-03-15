@@ -33,7 +33,10 @@ haproxy_platform_options = node["haproxy"]["platform"]
 
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s|
-  role, ns, svc, svc_type = s["role"], s["namespace"], s["service"], s["service_type"]
+
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts =
+    s["role"], s["namespace"], s["service"], s["service_type"],
+    s["lb_mode"], s["lb_algorithm"], s["lb_options"]
 
   Chef::Log.info("Skipping: #{ns}-#{svc}") if ! rcb_safe_deref(node, "vips.#{ns}-#{svc}") || ! rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
 
@@ -74,19 +77,9 @@ node["ha"]["available_services"].each do |s|
     Chef::Log.debug "realserver list is #{rs_list}"
 
     haproxy_virtual_server "#{ns}-#{svc}" do
-
-      if "#{ns}-#{svc}" == "horizon-dash_ssl"
-        mode "tcp"
-      elsif "#{ns}-#{svc}" == "horizon-dash" ||
-            "#{ns}-#{svc}" == "nova-ec2-public" ||
-            "#{ns}-#{svc}" == "swift-proxy" ||
-            "#{ns}-#{svc}" == "glance-registry"
-        mode "http"
-      else
-        mode "http"
-        options ["forwardfor", "httpchk"]
-      end
-
+      lb_algo lb_algo
+      mode lb_mode
+      options lb_opts
       vs_listen_ip listen_ip
       vs_listen_port listen_port.to_s
       real_servers rs_list
