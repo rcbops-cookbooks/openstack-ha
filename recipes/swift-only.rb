@@ -78,6 +78,7 @@ node["ha"]["available_services"].each do |s|
 
     # Generate array of host:port real servers
     rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
+    rs_list.sort!
     Chef::Log.debug "realserver list is #{rs_list}"
 
     haproxy_virtual_server "#{ns}-#{svc}" do
