@@ -18,14 +18,11 @@
 # limitations under the License.
 #
 
-# Need to enable shared_addresses
-#node.set["keepalived"]["shared_address"] = true
-
 # Include default keepalived recipe
 include_recipe "keepalived"
 
 # Include default haproxy recipe, for loadbalancing
-include_recipe "haproxy::default"
+include_recipe "haproxy"
 
 ks_admin_endpoint = get_access_endpoint("keystone-api", "keystone", "admin-api")
 keystone = get_settings_by_role("keystone","keystone")
@@ -39,6 +36,10 @@ node["ha"]["available_services"].each do |s|
     s["lb_mode"], s["lb_algorithm"], s["lb_options"]
 
   Chef::Log.info("Skipping: #{ns}-#{svc}") if ! rcb_safe_deref(node, "vips.#{ns}-#{svc}") || ! rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
+
+  if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
+    next unless ["swift-proxy", "keystone-admin-api", "keystone-service-api"].include?("#{ns}-#{svc}")
+  end
 
   # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
   if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
@@ -73,7 +74,8 @@ node["ha"]["available_services"].each do |s|
     listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
 
     # Generate array of host:port real servers
-    rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
+    rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << x["host"] + ":" + x["port"].to_s }
+    rs_list.sort!
     Chef::Log.debug "realserver list is #{rs_list}"
 
     haproxy_virtual_server "#{ns}-#{svc}" do
