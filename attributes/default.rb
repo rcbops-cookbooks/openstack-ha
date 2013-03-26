@@ -108,3 +108,4 @@ default["ha"]["available_services"] = [
     "lb_options" => []
   }
 ]
+default['ha']['swift-only'] = false
