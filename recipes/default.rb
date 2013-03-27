@@ -38,7 +38,10 @@ node["ha"]["available_services"].each do |s|
   Chef::Log.info("Skipping: #{ns}-#{svc}") if ! rcb_safe_deref(node, "vips.#{ns}-#{svc}") || ! rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
-    next unless ["swift-proxy", "keystone-admin-api", "keystone-service-api"].include?("#{ns}-#{svc}")
+    unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
+           node.run_list.expand(node.chef_environment).roles.include?("ha-controller2")
+      next unless ["swift-proxy", "keystone-admin-api", "keystone-service-api"].include?("#{ns}-#{svc}")
+    end
   end
 
   # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
