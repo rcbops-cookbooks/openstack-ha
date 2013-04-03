@@ -48,7 +48,7 @@ node["ha"]["available_services"].each do |s|
   if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
 
     # make sure we have some back ends
-    if get_role_count("#{role}") > 0
+    if get_role_count(role) > 0
 
       # first configure the vrrp
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
@@ -103,7 +103,7 @@ node["ha"]["available_services"].each do |s|
   end
 
   #unless listen_ip.nil?
-  if listen_ip and get_role_count("#{role}") > 0
+  if listen_ip and get_role_count(role) > 0
     # Need to update keystone endpoint
     case svc_type
     when "ec2"
