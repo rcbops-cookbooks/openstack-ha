@@ -1,4 +1,7 @@
 default["ha"]["available_services"] = [
+  # vrid set for vrrp provider, mysql-openstack & rabbitmq-openstack also set
+  # in their respective recipes. (values set to 100/200)
+  # This avoids duplicates or values of 0/256
   {
     "role" => "keystone-api",
     "namespace" => "keystone",
