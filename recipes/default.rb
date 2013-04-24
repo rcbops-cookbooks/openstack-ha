@@ -31,9 +31,9 @@ haproxy_platform_options = node["haproxy"]["platform"]
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts =
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid =
     s["role"], s["namespace"], s["service"], s["service_type"],
-    s["lb_mode"], s["lb_algorithm"], s["lb_options"]
+    s["lb_mode"], s["lb_algorithm"], s["lb_options"], s["vrid"]
 
   Chef::Log.info("Skipping: #{ns}-#{svc}") if ! rcb_safe_deref(node, "vips.#{ns}-#{svc}") || ! rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
 
@@ -54,7 +54,7 @@ node["ha"]["available_services"].each do |s|
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
       vrrp_interface = get_if_for_net('public', node)
-      router_id = listen_ip.split(".")[3]
+      router_id = vrid
 
       keepalived_chkscript "haproxy" do
         script "#{haproxy_platform_options["service_bin"]} #{haproxy_platform_options["haproxy_service"]} status"

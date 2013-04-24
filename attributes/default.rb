@@ -6,7 +6,8 @@ default["ha"]["available_services"] = [
     "service_type" => "identity",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"]
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "vrid" => 1
   },
   {
     "role" => "keystone-api",
@@ -15,7 +16,8 @@ default["ha"]["available_services"] = [
     "service_type" => "identity",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"]
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "vrid" => 2
   },
   {
     "role" => "nova-api-os-compute",
@@ -24,7 +26,8 @@ default["ha"]["available_services"] = [
     "service_type" => "compute",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"]
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "vrid" => 3
   },
   {
     "role" => "nova-api-ec2",
@@ -33,7 +36,8 @@ default["ha"]["available_services"] = [
     "service_type" => "ec2",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => []
+    "lb_options" => [],
+    "vrid" => 4
   },
   {
     "role" => "cinder-api",
@@ -42,7 +46,8 @@ default["ha"]["available_services"] = [
     "service_type" => "volume",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"]
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "vrid" => 5
   },
   {
     "role" => "glance-api",
@@ -51,7 +56,8 @@ default["ha"]["available_services"] = [
     "service_type" => "image",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"]
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "vrid" => 6
   },
   {
     "role" => "swift-proxy-server",
@@ -60,7 +66,8 @@ default["ha"]["available_services"] = [
     "service_type" => "object-store",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => []
+    "lb_options" => [],
+    "vrid" => 7
   },
   {
     "role" => "glance-registry",
@@ -69,7 +76,8 @@ default["ha"]["available_services"] = [
     "service_type" => "image",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => []
+    "lb_options" => [],
+    "vrid" => 8
   },
   {
     "role" => "nova-vncproxy",
@@ -78,7 +86,8 @@ default["ha"]["available_services"] = [
     "service_type" => "compute",
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
-    "lb_options" => []
+    "lb_options" => [],
+    "vrid" => 9
   },
   {
     "role" => "nova-vncproxy",
@@ -87,7 +96,8 @@ default["ha"]["available_services"] = [
     "service_type" => "compute",
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
-    "lb_options" => []
+    "lb_options" => [],
+    "vrid" => 10
   },
   {
     "role" => "horizon-server",
@@ -96,7 +106,8 @@ default["ha"]["available_services"] = [
     "service_type" => "dash",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"]
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "vrid" => 11
   },
   {
     "role" => "horizon-server",
@@ -105,7 +116,8 @@ default["ha"]["available_services"] = [
     "service_type" => "dash",
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
-    "lb_options" => []
+    "lb_options" => [],
+    "vrid" => 12
   }
 ]
 default['ha']['swift-only'] = false
