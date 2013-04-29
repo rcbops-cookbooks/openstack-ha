@@ -57,7 +57,7 @@ node["ha"]["available_services"].each do |s|
       # TODO(anyone): fix this in a way that lets us run multiple clusters in the
       #               same broadcast domain.
        # this doesn't solve for the last octect == 255
-      router_id = listen_ip.split(".")[3].to_id + 1
+      router_id = listen_ip.split(".")[3].to_i + 1
 
       keepalived_chkscript "haproxy" do
         script "#{haproxy_platform_options["service_bin"]} #{haproxy_platform_options["haproxy_service"]} status"
