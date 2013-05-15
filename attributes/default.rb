@@ -109,6 +109,15 @@ default["ha"]["available_services"] = [
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => []
+  },
+  {
+    "role" => "ceilometer-api",
+    "namespace" => "ceilometer",
+    "service" => "api",
+    "service_type" => "metering",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => []
   }
 ]
 default['ha']['swift-only'] = false
