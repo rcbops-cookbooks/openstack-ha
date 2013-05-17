@@ -25,7 +25,7 @@ include_recipe "keepalived"
 include_recipe "haproxy"
 
 ks_admin_endpoint = get_access_endpoint("keystone-api", "keystone", "admin-api")
-keystone = get_settings_by_role("keystone","keystone")
+keystone = get_settings_by_role("keystone-setup","keystone")
 haproxy_platform_options = node["haproxy"]["platform"]
 
 # set up floating ip/load balancer for the defined services
