@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require "ipaddr"
 
 # Include default keepalived recipe
 include_recipe "keepalived"
@@ -35,8 +36,6 @@ node["ha"]["available_services"].each do |s|
     s["role"], s["namespace"], s["service"], s["service_type"],
     s["lb_mode"], s["lb_algorithm"], s["lb_options"]
 
-  Chef::Log.info("Skipping: #{ns}-#{svc}") if ! rcb_safe_deref(node, "vips.#{ns}-#{svc}") || ! rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
-
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
            node.run_list.expand(node.chef_environment).roles.include?("ha-controller2")
@@ -46,6 +45,10 @@ node["ha"]["available_services"].each do |s|
 
   # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
   if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
+    ip = IPAddr.new listen_ip
+    if ! ip.ipv4?()
+      Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
+    end
 
     # make sure we have some back ends
     if get_role_count(role) > 0
@@ -102,7 +105,13 @@ node["ha"]["available_services"].each do |s|
 
   elsif
     listen_ip = rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
+    ip = IPAddr.new listen_ip
+    if ! ip.ipv4?()
+      Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
+    end
     Chef::Log.info("External vip found for #{ns}-#{svc}. Only updating keystone endpoint")
+  else
+    Chef::Log.info("Skipping: #{ns}-#{svc}")
   end
 
   #unless listen_ip.nil?
