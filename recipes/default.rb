@@ -30,11 +30,11 @@ keystone = get_settings_by_role("keystone-setup","keystone")
 haproxy_platform_options = node["haproxy"]["platform"]
 
 # set up floating ip/load balancer for the defined services
-node["ha"]["available_services"].each do |s|
+node["ha"]["available_services"].each do |s, v|
 
   role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid =
-    s["role"], s["namespace"], s["service"], s["service_type"],
-    s["lb_mode"], s["lb_algorithm"], s["lb_options"], s["vrid"]
+    v["role"], v["namespace"], v["service"], v["service_type"],
+    v["lb_mode"], v["lb_algorithm"], v["lb_options"], v["vrid"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
