@@ -32,9 +32,9 @@ haproxy_platform_options = node["haproxy"]["platform"]
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts =
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid =
     s["role"], s["namespace"], s["service"], s["service_type"],
-    s["lb_mode"], s["lb_algorithm"], s["lb_options"]
+    s["lb_mode"], s["lb_algorithm"], s["lb_options"], s["vrid"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
@@ -59,8 +59,13 @@ node["ha"]["available_services"].each do |s|
       vrrp_interface = get_if_for_net('public', node)
       # TODO(anyone): fix this in a way that lets us run multiple clusters in the
       #               same broadcast domain.
-       # this doesn't solve for the last octect == 255
-      router_id = listen_ip.split(".")[3].to_i + 1
+      # this doesn't solve for the last octect == 255
+      if vrid > 0 and vrid < 256
+        router_id = vrid
+      else
+        Chef::Log.info("Invalid or no vrid set - defaulting to last octet of IP + 1")
+        router_id = listen_ip.split(".")[3].to_i + 1
+      end
 
       keepalived_chkscript "haproxy" do
         script "#{haproxy_platform_options["service_bin"]} #{haproxy_platform_options["haproxy_service"]} status"
