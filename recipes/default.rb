@@ -57,9 +57,8 @@ node["ha"]["available_services"].each do |s, v|
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
       vrrp_interface = get_if_for_net('public', node)
-      # TODO(anyone): fix this in a way that lets us run multiple clusters in the
-      #               same broadcast domain.
-      # this doesn't solve for the last octect == 255
+      # The VRID is set to the last octet of the IP unless it is overridden
+      # If the last octet is 255 or the same as another IP, we can override it.
       if vrid > 0 and vrid < 256
         router_id = vrid
       else
