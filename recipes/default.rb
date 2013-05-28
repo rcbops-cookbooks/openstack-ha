@@ -30,11 +30,11 @@ keystone = get_settings_by_role("keystone-setup","keystone")
 haproxy_platform_options = node["haproxy"]["platform"]
 
 # set up floating ip/load balancer for the defined services
-node["ha"]["available_services"].each do |s|
+node["ha"]["available_services"].each do |s, v|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts =
-    s["role"], s["namespace"], s["service"], s["service_type"],
-    s["lb_mode"], s["lb_algorithm"], s["lb_options"]
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid =
+    v["role"], v["namespace"], v["service"], v["service_type"],
+    v["lb_mode"], v["lb_algorithm"], v["lb_options"], v["vrid"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
@@ -57,10 +57,14 @@ node["ha"]["available_services"].each do |s|
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
       vrrp_interface = get_if_for_net('public', node)
-      # TODO(anyone): fix this in a way that lets us run multiple clusters in the
-      #               same broadcast domain.
-       # this doesn't solve for the last octect == 255
-      router_id = listen_ip.split(".")[3].to_i + 1
+      # The VRID is set to the last octet of the IP unless it is overridden
+      # If the last octet is 255 or the same as another IP, we can override it.
+      if vrid > 0 and vrid < 256
+        router_id = vrid
+      else
+        Chef::Log.info("Invalid or no vrid set - defaulting to last octet of IP + 1")
+        router_id = listen_ip.split(".")[3].to_i + 1
+      end
 
       keepalived_chkscript "haproxy" do
         script "#{haproxy_platform_options["service_bin"]} #{haproxy_platform_options["haproxy_service"]} status"
