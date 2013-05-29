@@ -32,9 +32,9 @@ haproxy_platform_options = node["haproxy"]["platform"]
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s, v|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid =
-    v["role"], v["namespace"], v["service"], v["service_type"],
-    v["lb_mode"], v["lb_algorithm"], v["lb_options"], v["vrid"]
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid, vip_network =
+    v["role"], v["namespace"], v["service"], v["service_type"], v["lb_mode"],
+    v["lb_algorithm"], v["lb_options"], v["vrid"], v["vip_network"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
@@ -56,7 +56,7 @@ node["ha"]["available_services"].each do |s, v|
       # first configure the vrrp
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
-      vrrp_interface = get_if_for_net('public', node)
+      vrrp_interface = get_if_for_net(vip_network, node)
       # The VRID is set to the last octet of the IP unless it is overridden
       # If the last octet is 255 or the same as another IP, we can override it.
       if vrid > 0 and vrid < 256
