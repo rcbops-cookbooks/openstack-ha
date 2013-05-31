@@ -1,3 +1,4 @@
+name              "openstack-ha"
 maintainer        "Rackspace US, Inc."
 license           "Apache 2.0"
 description       "Configures vrrp IPs and virtual_servers for openstack services"
