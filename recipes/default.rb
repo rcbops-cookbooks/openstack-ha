@@ -78,9 +78,7 @@ node["ha"]["available_services"].each do |s, v|
         virtual_ipaddress Array(listen_ip)
         virtual_router_id router_id  # Needs to be a integer between 1..255
         track_script "haproxy"
-        notify_master "#{haproxy_platform_options["service_bin"]} haproxy restart ; #{haproxy_platform_options["service_bin"]} keystone restart"
-        notify_backup "#{haproxy_platform_options["service_bin"]} haproxy stop ; #{haproxy_platform_options["service_bin"]} keystone restart"
-        notify_fault "#{haproxy_platform_options["service_bin"]} haproxy stop ; #{haproxy_platform_options["service_bin"]} keystone restart"
+        notify_fault "#{haproxy_platform_options["service_bin"]} haproxy restart"
       end
 
       # now configure the virtual server
