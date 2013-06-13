@@ -59,6 +59,7 @@ Attributes
  * _`namespace` - name of the attribute namespace to be searched for (see for eg nova cookbook attributes)_
  * _`service` - name of the service to be searched for in the relevant service hash (see for eg nova cookbook attributes)_
  * _`service_type` - the type of service that keystone expects (identity, compute, ec2, volume, image, object-store)_
+ * _`vrid` - `define the VRRP router ID used by keepalived.  This must be an integer > 0 and < 255.  Defaults to 12.
 
 
 License and Author
