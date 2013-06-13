@@ -6,7 +6,7 @@ default["ha"]["available_services"]["keystone-admin-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["keystone-service-api"] = {
@@ -17,7 +17,7 @@ default["ha"]["available_services"]["keystone-service-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["nova-api"] = {
@@ -28,7 +28,7 @@ default["ha"]["available_services"]["nova-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["nova-ec2-public"] = {
@@ -39,7 +39,7 @@ default["ha"]["available_services"]["nova-ec2-public"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["cinder-api"] = {
@@ -50,7 +50,7 @@ default["ha"]["available_services"]["cinder-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["glance-api"] = {
@@ -61,7 +61,7 @@ default["ha"]["available_services"]["glance-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["swift-proxy"] = {
@@ -72,7 +72,7 @@ default["ha"]["available_services"]["swift-proxy"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["glance-registry"] = {
@@ -83,7 +83,7 @@ default["ha"]["available_services"]["glance-registry"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["nova-novnc-proxy"] = {
@@ -94,7 +94,7 @@ default["ha"]["available_services"]["nova-novnc-proxy"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["nova-xvpvnc-proxy"] = {
@@ -105,7 +105,7 @@ default["ha"]["available_services"]["nova-xvpvnc-proxy"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["horizon-dash"] = {
@@ -116,7 +116,7 @@ default["ha"]["available_services"]["horizon-dash"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["horizon-dash_ssl"] = {
@@ -127,7 +127,7 @@ default["ha"]["available_services"]["horizon-dash_ssl"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 default["ha"]["available_services"]["ceilometer-api"] = {
@@ -138,7 +138,7 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "vrid" => 0,
+    "vrid" => 12,
     "vip_network" => "public"
 }
 

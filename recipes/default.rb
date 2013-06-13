@@ -57,14 +57,7 @@ node["ha"]["available_services"].each do |s, v|
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
       vrrp_interface = get_if_for_net(vip_network, node)
-      # The VRID is set to the last octet of the IP unless it is overridden
-      # If the last octet is 255 or the same as another IP, we can override it.
-      if vrid > 0 and vrid < 256
-        router_id = vrid
-      else
-        Chef::Log.info("Invalid or no vrid set - defaulting to last octet of IP + 1")
-        router_id = listen_ip.split(".")[3].to_i + 1
-      end
+      router_id = vrid
 
       keepalived_chkscript "haproxy" do
         script "#{haproxy_platform_options["service_bin"]} #{haproxy_platform_options["haproxy_service"]} status"
@@ -131,27 +124,27 @@ node["ha"]["available_services"].each do |s, v|
       public_endpoint = get_access_endpoint(role, ns, svc)
       admin_endpoint  = public_endpoint.clone
     end
-    unless "#{ns}-#{svc}" == "glance-registry" ||
-        "#{ns}-#{svc}" == "nova-xvpvnc-proxy" ||
-        "#{ns}-#{svc}" == "nova-novnc-proxy" ||
-        "#{ns}-#{svc}" == "horizon-dash" ||
-        "#{ns}-#{svc}" == "horizon-dash_ssl"
 
-      keystone_register "Recreate Endpoint" do
-        auth_host ks_admin_endpoint["host"]
-        auth_port ks_admin_endpoint["port"]
-        auth_protocol ks_admin_endpoint["scheme"]
-        api_ver ks_admin_endpoint["path"]
-        auth_token keystone["admin_token"]
-        service_type svc_type
-        endpoint_region node["nova"]["compute"]["region"]
-        endpoint_adminurl admin_endpoint['uri']
-        endpoint_internalurl public_endpoint["uri"]
-        endpoint_publicurl public_endpoint["uri"]
-        retries 4
-        retry_delay 5
-        action :recreate_endpoint
-      end
+    keystone_register "Recreate Endpoint" do
+      auth_host ks_admin_endpoint["host"]
+      auth_port ks_admin_endpoint["port"]
+      auth_protocol ks_admin_endpoint["scheme"]
+      api_ver ks_admin_endpoint["path"]
+      auth_token keystone["admin_token"]
+      service_type svc_type
+      endpoint_region node["nova"]["compute"]["region"]
+      endpoint_adminurl admin_endpoint['uri']
+      endpoint_internalurl public_endpoint["uri"]
+      endpoint_publicurl public_endpoint["uri"]
+      retries 4
+      retry_delay 5
+      action :recreate_endpoint
+      not_if { "#{ns}-#{svc}" == "glance-registry" ||
+               "#{ns}-#{svc}" == "nova-xvpvnc-proxy" ||
+               "#{ns}-#{svc}" == "nova-novnc-proxy" ||
+               "#{ns}-#{svc}" == "horizon-dash" ||
+               "#{ns}-#{svc}" == "horizon-dash_ssl"
+             }
     end
   end
   # ********************************************************
