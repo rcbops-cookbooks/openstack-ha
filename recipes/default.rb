@@ -100,6 +100,7 @@ node["ha"]["available_services"].each do |s|
     Chef::Log.info("External vip found for #{ns}-#{svc}. Only updating keystone endpoint")
   end
 
+  endpoint_skip_list=['glance-registry','nova-xvpvnc-proxy','nova-novnc-proxy','horizon-dash','horizon-dash_ssl']
   #unless listen_ip.nil?
   if listen_ip and get_role_count(role) > 0
     # Need to update keystone endpoint
@@ -115,12 +116,10 @@ node["ha"]["available_services"].each do |s|
       public_endpoint = get_access_endpoint(role, ns, svc)
       admin_endpoint  = public_endpoint.clone
     end
-    unless "#{ns}-#{svc}" == "glance-registry" ||
-        "#{ns}-#{svc}" == "nova-xvpvnc-proxy" ||
-        "#{ns}-#{svc}" == "nova-novnc-proxy" ||
-        "#{ns}-#{svc}" == "horizon-dash" ||
-        "#{ns}-#{svc}" == "horizon-dash_ssl"
 
+    if endpoint_skip_list.include? "#{ns}-#{svc}"
+      Chef::Log.info("Skipping reconfigure endpoint for #{ns}-#{svc}")
+    else
       keystone_register "Recreate Endpoint" do
         auth_host ks_admin_endpoint["host"]
         auth_port ks_admin_endpoint["port"]
