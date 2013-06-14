@@ -109,6 +109,7 @@ node["ha"]["available_services"].each do |s, v|
     Chef::Log.info("Skipping: #{ns}-#{svc}")
   end
 
+  endpoint_skip_list=['glance-registry','nova-xvpvnc-proxy','nova-novnc-proxy','horizon-dash','horizon-dash_ssl']
   #unless listen_ip.nil?
   if listen_ip and get_role_count(role) > 0
     # Need to update keystone endpoint
@@ -125,26 +126,24 @@ node["ha"]["available_services"].each do |s, v|
       admin_endpoint  = public_endpoint.clone
     end
 
-    keystone_register "Recreate Endpoint" do
-      auth_host ks_admin_endpoint["host"]
-      auth_port ks_admin_endpoint["port"]
-      auth_protocol ks_admin_endpoint["scheme"]
-      api_ver ks_admin_endpoint["path"]
-      auth_token keystone["admin_token"]
-      service_type svc_type
-      endpoint_region node["nova"]["compute"]["region"]
-      endpoint_adminurl admin_endpoint['uri']
-      endpoint_internalurl public_endpoint["uri"]
-      endpoint_publicurl public_endpoint["uri"]
-      retries 4
-      retry_delay 5
-      action :recreate_endpoint
-      not_if { "#{ns}-#{svc}" == "glance-registry" ||
-               "#{ns}-#{svc}" == "nova-xvpvnc-proxy" ||
-               "#{ns}-#{svc}" == "nova-novnc-proxy" ||
-               "#{ns}-#{svc}" == "horizon-dash" ||
-               "#{ns}-#{svc}" == "horizon-dash_ssl"
-             }
+    if endpoint_skip_list.include? "#{ns}-#{svc}"
+      Chef::Log.info("Skipping reconfigure endpoint for #{ns}-#{svc}")
+    else
+      keystone_register "Recreate Endpoint" do
+        auth_host ks_admin_endpoint["host"]
+        auth_port ks_admin_endpoint["port"]
+        auth_protocol ks_admin_endpoint["scheme"]
+        api_ver ks_admin_endpoint["path"]
+        auth_token keystone["admin_token"]
+        service_type svc_type
+        endpoint_region node["nova"]["compute"]["region"]
+        endpoint_adminurl admin_endpoint['uri']
+        endpoint_internalurl public_endpoint["uri"]
+        endpoint_publicurl public_endpoint["uri"]
+        retries 4
+        retry_delay 5
+        action :recreate_endpoint
+      end
     end
   end
   # ********************************************************
