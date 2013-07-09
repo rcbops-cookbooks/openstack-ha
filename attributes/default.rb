@@ -6,6 +6,7 @@ default["ha"]["available_services"]["keystone-admin-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -17,6 +18,7 @@ default["ha"]["available_services"]["keystone-service-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -28,6 +30,7 @@ default["ha"]["available_services"]["nova-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -39,6 +42,7 @@ default["ha"]["available_services"]["nova-admin-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
@@ -50,6 +54,7 @@ default["ha"]["available_services"]["nova-internal-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
@@ -61,6 +66,7 @@ default["ha"]["available_services"]["nova-ec2-public"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -72,6 +78,7 @@ default["ha"]["available_services"]["cinder-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -83,6 +90,7 @@ default["ha"]["available_services"]["cinder-admin-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
@@ -94,6 +102,7 @@ default["ha"]["available_services"]["cinder-internal-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
@@ -105,6 +114,7 @@ default["ha"]["available_services"]["glance-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -116,10 +126,11 @@ default["ha"]["available_services"]["glance-admin-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
-default["ha"]["available_services"]["glance-nternal-api"] = {
+default["ha"]["available_services"]["glance-internal-api"] = {
     "role" => "glance-api",
     "namespace" => "glance",
     "service" => "internal-api",
@@ -127,6 +138,7 @@ default["ha"]["available_services"]["glance-nternal-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
@@ -138,6 +150,7 @@ default["ha"]["available_services"]["swift-proxy"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -149,6 +162,7 @@ default["ha"]["available_services"]["glance-registry"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -160,6 +174,7 @@ default["ha"]["available_services"]["nova-novnc-proxy"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -171,6 +186,7 @@ default["ha"]["available_services"]["nova-xvpvnc-proxy"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -182,6 +198,7 @@ default["ha"]["available_services"]["horizon-dash"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -192,7 +209,8 @@ default["ha"]["available_services"]["horizon-dash_ssl"] = {
     "service_type" => "dash",
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
-    "lb_options" => [],
+    "lb_options" => ["ssl-hello-chk"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -203,7 +221,8 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "service_type" => "metering",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => [],
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
 }
@@ -214,7 +233,8 @@ default["ha"]["available_services"]["ceilometer-admin-api"] = {
     "service_type" => "metering",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => [],
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
@@ -225,7 +245,8 @@ default["ha"]["available_services"]["ceilometer-internal-api"] = {
     "service_type" => "metering",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => [],
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "management"
 }
