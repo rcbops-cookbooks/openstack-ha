@@ -32,9 +32,9 @@ haproxy_platform_options = node["haproxy"]["platform"]
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s, v|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, vrid, vip_network =
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, ssl_lb_opts, vrid, vip_network =
     v["role"], v["namespace"], v["service"], v["service_type"], v["lb_mode"],
-    v["lb_algorithm"], v["lb_options"], v["vrid"], v["vip_network"]
+    v["lb_algorithm"], v["lb_options"], v["ssl_lb_options"], v["vrid"], v["vip_network"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
@@ -79,7 +79,11 @@ node["ha"]["available_services"].each do |s, v|
 
       # Lookup listen_port from the environment, or fall back to the first searched node running the role
       listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
-
+      scheme = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["scheme"] : get_realserver_endpoints(role, ns, svc)[0]["scheme"]
+      if scheme == "https"
+        lb_opts = ssl_lb_opts
+        lb_mode = "tcp"
+      end
       # Generate array of host:port real servers
       rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << x["host"] + ":" + x["port"].to_s }
       rs_list.sort!
