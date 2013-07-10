@@ -34,30 +34,6 @@ default["ha"]["available_services"]["nova-api"] = {
     "vrid" => 12,
     "vip_network" => "public"
 }
-default["ha"]["available_services"]["nova-admin-api"] = {
-    "role" => "nova-api-os-compute",
-    "namespace" => "nova",
-    "service" => "admin-api",
-    "service_type" => "compute",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
-default["ha"]["available_services"]["nova-internal-api"] = {
-    "role" => "nova-api-os-compute",
-    "namespace" => "nova",
-    "service" => "internal-api",
-    "service_type" => "compute",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
 default["ha"]["available_services"]["nova-ec2-public"] = {
     "role" => "nova-api-ec2",
     "namespace" => "nova",
@@ -82,30 +58,6 @@ default["ha"]["available_services"]["cinder-api"] = {
     "vrid" => 12,
     "vip_network" => "public"
 }
-default["ha"]["available_services"]["cinder-admin-api"] = {
-    "role" => "cinder-api",
-    "namespace" => "cinder",
-    "service" => "admin-api",
-    "service_type" => "volume",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
-default["ha"]["available_services"]["cinder-internal-api"] = {
-    "role" => "cinder-api",
-    "namespace" => "cinder",
-    "service" => "internal-api",
-    "service_type" => "volume",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
 default["ha"]["available_services"]["glance-api"] = {
     "role" => "glance-api",
     "namespace" => "glance",
@@ -117,30 +69,6 @@ default["ha"]["available_services"]["glance-api"] = {
     "ssl_lb_options" => ["ssl-hello-chk"],
     "vrid" => 12,
     "vip_network" => "public"
-}
-default["ha"]["available_services"]["glance-admin-api"] = {
-    "role" => "glance-api",
-    "namespace" => "glance",
-    "service" => "admin-api",
-    "service_type" => "image",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
-default["ha"]["available_services"]["glance-internal-api"] = {
-    "role" => "glance-api",
-    "namespace" => "glance",
-    "service" => "internal-api",
-    "service_type" => "image",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
 }
 default["ha"]["available_services"]["swift-proxy"] = {
     "role" => "swift-proxy-server",
@@ -226,29 +154,4 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "vrid" => 12,
     "vip_network" => "public"
 }
-default["ha"]["available_services"]["ceilometer-admin-api"] = {
-    "role" => "ceilometer-api",
-    "namespace" => "ceilometer",
-    "service" => "admin-api",
-    "service_type" => "metering",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
-default["ha"]["available_services"]["ceilometer-internal-api"] = {
-    "role" => "ceilometer-api",
-    "namespace" => "ceilometer",
-    "service" => "internal-api",
-    "service_type" => "metering",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "management"
-}
-
 default['ha']['swift-only'] = false
