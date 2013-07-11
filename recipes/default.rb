@@ -122,18 +122,24 @@ node["ha"]["available_services"].each do |s, v|
       public_endpoint = get_access_endpoint(role, ns, "ec2-public")
       admin_path = get_settings_by_role(role, ns)['services']['ec2-admin']['path']
       admin_endpoint = {'uri' => "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}" }
+      internal_endpoint = admin_endpoint.clone
     when "identity"
       public_endpoint = get_access_endpoint(role, ns, "service-api")
       admin_endpoint  = get_access_endpoint(role, ns, "admin-api")
+      internal_endpoint = admin_endpoint.clone
     else
-      public_endpoint = get_access_endpoint(role, ns, svc)
-      admin_endpoint  = public_endpoint.clone
+      # ensure we use uri values for each endpoint type if they have been provided.  Else look them up
+      # NOTE:(mancdaz) right now, unless you provide an override value for an endpoint type, it will use the
+      # public endpoint.  This maintains current HA functionality.
+      public_endpoint = rcb_safe_deref(node, "#{ns}.services.#{svc}.uri") ? node[ns]["services"][svc] : get_access_endpoint(role, ns, svc)
+      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-#{svc}.uri") ? node[ns]["services"]["internal-#{svc}"] : public_endpoint.clone
+      admin_endpoint = rcb_safe_deref(node, "#{ns}.services.admin-#{svc}.uri") ? node[ns]["services"]["admin-#{svc}"] : public_endpoint.clone
     end
 
     if endpoint_skip_list.include? "#{ns}-#{svc}"
       Chef::Log.info("Skipping reconfigure endpoint for #{ns}-#{svc}")
     else
-      keystone_register "Recreate Endpoint" do
+      keystone_register "Recreate #{ns} Endpoint" do
         auth_host ks_admin_endpoint["host"]
         auth_port ks_admin_endpoint["port"]
         auth_protocol ks_admin_endpoint["scheme"]
@@ -141,9 +147,9 @@ node["ha"]["available_services"].each do |s, v|
         auth_token keystone["admin_token"]
         service_type svc_type
         endpoint_region node["nova"]["compute"]["region"]
-        endpoint_adminurl admin_endpoint['uri']
-        endpoint_internalurl public_endpoint["uri"]
         endpoint_publicurl public_endpoint["uri"]
+        endpoint_internalurl internal_endpoint["uri"]
+        endpoint_adminurl admin_endpoint['uri']
         retries 4
         retry_delay 5
         action :recreate_endpoint
