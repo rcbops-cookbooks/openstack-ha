@@ -122,9 +122,11 @@ node["ha"]["available_services"].each do |s, v|
       public_endpoint = get_access_endpoint(role, ns, "ec2-public")
       admin_path = get_settings_by_role(role, ns)['services']['ec2-admin']['path']
       admin_endpoint = {'uri' => "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}" }
+      internal_endpoint = admin_endpoint.clone
     when "identity"
       public_endpoint = get_access_endpoint(role, ns, "service-api")
       admin_endpoint  = get_access_endpoint(role, ns, "admin-api")
+      internal_endpoint = admin_endpoint.clone
     else
       # ensure we use uri values for each endpoint type if they have been provided.  Else look them up
       # NOTE:(mancdaz) right now, unless you provide an override value for an endpoint type, it will use the
