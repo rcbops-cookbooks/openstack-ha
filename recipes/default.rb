@@ -72,6 +72,7 @@ node["ha"]["available_services"].each do |s, v|
         virtual_router_id router_id  # Needs to be a integer between 1..255
         track_script "haproxy"
         notify_fault "#{haproxy_platform_options["service_bin"]} haproxy restart"
+        notifies :restart, "service[keepalived]"
       end
 
       # now configure the virtual server
