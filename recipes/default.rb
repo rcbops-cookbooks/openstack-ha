@@ -124,9 +124,9 @@ node["ha"]["available_services"].each do |s, v|
       admin_endpoint = {'uri' => "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}" }
       internal_endpoint = admin_endpoint.clone
     when "identity"
-      public_endpoint = get_access_endpoint(role, ns, "service-api")
-      admin_endpoint  = get_access_endpoint(role, ns, "admin-api")
-      internal_endpoint = admin_endpoint.clone
+      public_endpoint = rcb_safe_deref(node, "#{ns}.services.service-api.uri") ? node[ns]["services"]["service-api"] : get_access_endpoint(role, ns, "service-api")
+      admin_endpoint  = rcb_safe_deref(node, "#{ns}.services.admin-api.uri") ? node[ns]["services"]["admin-api"] : get_access_endpoint(role, ns, "admin-api")
+      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-api.uri") ? node[ns]["services"]["internal-api"] : admin_endpoint.clone
     else
       # ensure we use uri values for each endpoint type if they have been provided.  Else look them up
       # NOTE:(mancdaz) right now, unless you provide an override value for an endpoint type, it will use the
