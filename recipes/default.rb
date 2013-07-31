@@ -32,9 +32,9 @@ haproxy_platform_options = node["haproxy"]["platform"]
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s, v|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, ssl_lb_opts, vrid, vip_network =
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, ssl_lb_opts =
     v["role"], v["namespace"], v["service"], v["service_type"], v["lb_mode"],
-    v["lb_algorithm"], v["lb_options"], v["ssl_lb_options"], v["vrid"], v["vip_network"]
+    v["lb_algorithm"], v["lb_options"], v["ssl_lb_options"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
@@ -44,11 +44,14 @@ node["ha"]["available_services"].each do |s, v|
   end
 
   # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
-  if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
+  if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}.vip")
     ip = IPAddr.new listen_ip
     if ! ip.ipv4?()
-      Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
+      Chef::Application.fatal!("vips.#{ns}-#{svc}.vip is not an IPv4 address.")
     end
+
+    vrid = node["vips"]["#{ns}-#{svc}"]["vrid"]
+    vip_network = node["vips"]["#{ns}-#{svc}"]["network"]
 
     # make sure we have some back ends
     if get_role_count(role) > 0
@@ -104,10 +107,10 @@ node["ha"]["available_services"].each do |s, v|
     end
 
   elsif
-    listen_ip = rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
+    listen_ip = rcb_safe_deref(node, "external-vips.#{ns}-#{svc}.vip")
     ip = IPAddr.new listen_ip
     if ! ip.ipv4?()
-      Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
+      Chef::Application.fatal!("vips.#{ns}-#{svc}.vip is not an IPv4 address.")
     end
     Chef::Log.info("External vip found for #{ns}-#{svc}. Only updating keystone endpoint")
   else
