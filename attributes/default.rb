@@ -154,17 +154,20 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "vrid" => 24,
     "vip_network" => "public"
 }
-default["ha"]["available_services"]["quantum-server"] = {
-    "role" => "nova-network-controller",
-    "namespace" => "quantum",
-    "service" => "api",
-    "service_type" => "network",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 25,
-    "vip_network" => "public"
-}
+
+if node["nova"]["network"]["provider"] == "quantum"
+    default["ha"]["available_services"]["quantum-server"] = {
+        "role" => "nova-network-controller",
+        "namespace" => "quantum",
+        "service" => "api",
+        "service_type" => "network",
+        "lb_mode" => "http",
+        "lb_algorithm" => "roundrobin",
+        "lb_options" => [],
+        "ssl_lb_options" => ["ssl-hello-chk"],
+        "vrid" => 25,
+        "vip_network" => "public"
+    }
+end
 
 default['ha']['swift-only'] = false
