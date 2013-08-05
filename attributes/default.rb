@@ -1,3 +1,29 @@
+# mysql
+# default["vips"]["config"]["127.0.0.2"]["vrid"]=10
+
+# rabbitmq
+# default["vips"]["config"]["127.0.0.3"]["vrid"]=11
+
+#  all openstack services via haproxy
+# default["vips"]["config"]["127.0.0.4"]["network"]="management"
+# default["vips"]["config"]["127.0.0.4"]["vrid"]=12
+
+default["vips"]["mysql-db"] = nil
+default["vips"]["rabbitmq-queue"] = nil
+default["vips"]["horizon-dash"] = nil
+default["vips"]["horizon-dash_ssl"] = nil
+default["vips"]["keystone-service-api"] = nil
+default["vips"]["keystone-admin-api"] = nil
+default["vips"]["nova-xvpvnc-proxy"] = nil
+default["vips"]["nova-api"] = nil
+default["vips"]["nova-ec2-public"] = nil
+default["vips"]["nova-novnc-proxy"] = nil
+default["vips"]["glance-api"] = nil
+default["vips"]["glance-registry"] = nil
+default["vips"]["cinder-api"] = nil
+default["vips"]["quantum-api"] = nil
+
+
 default["ha"]["available_services"]["keystone-admin-api"] = {
     "role" => "keystone-api",
     "namespace" => "keystone",

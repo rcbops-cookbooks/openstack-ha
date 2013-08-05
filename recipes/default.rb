@@ -44,14 +44,19 @@ node["ha"]["available_services"].each do |s, v|
   end
 
   # See if a vip has been defined for this service, if yes create a vrrp and virtual server definition
-  if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}.vip")
+  if listen_ip = rcb_safe_deref(node, "vips.#{ns}-#{svc}")
     ip = IPAddr.new listen_ip
     if ! ip.ipv4?()
-      Chef::Application.fatal!("vips.#{ns}-#{svc}.vip is not an IPv4 address.")
+      Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
     end
 
-    vrid = node["vips"]["#{ns}-#{svc}"]["vrid"]
-    vip_network = node["vips"]["#{ns}-#{svc}"]["network"]
+    if not vrid = rcb_safe_deref(node, "vips_config_#{listen_ip}_vrid","_")
+      Chef::Application.fatal! "You have not configured a VRID for the VIP.  Please set node[\"vips\"][\"config\"][\"#{listen_ip}\"][\"vrid\"]"
+    end
+
+    if not vip_network = rcb_safe_deref(node, "vips_config_#{listen_ip}_network","_")
+      Chef::Application.fatal! "You have not configured a network for the VIP.  Please set node[\"vips\"][\"config\"][\"#{listen_ip}\"][\"network\"]"
+    end
 
     # make sure we have some back ends
     if get_role_count(role) > 0
@@ -74,7 +79,6 @@ node["ha"]["available_services"].each do |s, v|
         virtual_ipaddress Array(listen_ip)
         virtual_router_id router_id  # Needs to be a integer between 1..255
         track_script "haproxy"
-        notify_fault "#{haproxy_platform_options["service_bin"]} haproxy restart"
         notifies :restart, "service[keepalived]"
       end
 
@@ -107,10 +111,10 @@ node["ha"]["available_services"].each do |s, v|
     end
 
   elsif
-    listen_ip = rcb_safe_deref(node, "external-vips.#{ns}-#{svc}.vip")
+    listen_ip = rcb_safe_deref(node, "external-vips.#{ns}-#{svc}")
     ip = IPAddr.new listen_ip
     if ! ip.ipv4?()
-      Chef::Application.fatal!("vips.#{ns}-#{svc}.vip is not an IPv4 address.")
+      Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
     end
     Chef::Log.info("External vip found for #{ns}-#{svc}. Only updating keystone endpoint")
   else
@@ -154,7 +158,7 @@ node["ha"]["available_services"].each do |s, v|
         endpoint_publicurl public_endpoint["uri"]
         endpoint_internalurl internal_endpoint["uri"]
         endpoint_adminurl admin_endpoint['uri']
-        retries 4
+        retries 10
         retry_delay 5
         action :recreate_endpoint
       end
