@@ -23,7 +23,6 @@ default["vips"]["glance-registry"] = nil
 default["vips"]["cinder-api"] = nil
 default["vips"]["quantum-api"] = nil
 
-
 default["ha"]["available_services"]["keystone-admin-api"] = {
     "role" => "keystone-api",
     "namespace" => "keystone",
@@ -154,15 +153,18 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
-default["ha"]["available_services"]["quantum-server"] = {
-    "role" => "nova-network-controller",
-    "namespace" => "quantum",
-    "service" => "api",
-    "service_type" => "network",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"]
-}
+
+if node["nova"]["network"]["provider"] == "quantum"
+    default["ha"]["available_services"]["quantum-server"] = {
+        "role" => "nova-network-controller",
+        "namespace" => "quantum",
+        "service" => "api",
+        "service_type" => "network",
+        "lb_mode" => "http",
+        "lb_algorithm" => "roundrobin",
+        "lb_options" => [],
+        "ssl_lb_options" => ["ssl-hello-chk"],
+    }
+end
 
 default['ha']['swift-only'] = false
