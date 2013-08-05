@@ -32,9 +32,9 @@ haproxy_platform_options = node["haproxy"]["platform"]
 # set up floating ip/load balancer for the defined services
 node["ha"]["available_services"].each do |s, v|
 
-  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, ssl_lb_opts, vrid, vip_network =
+  role, ns, svc, svc_type, lb_mode, lb_algo, lb_opts, ssl_lb_opts =
     v["role"], v["namespace"], v["service"], v["service_type"], v["lb_mode"],
-    v["lb_algorithm"], v["lb_options"], v["ssl_lb_options"], v["vrid"], v["vip_network"]
+    v["lb_algorithm"], v["lb_options"], v["ssl_lb_options"]
 
   if rcb_safe_deref(node, "ha.swift-only") && node['ha']['swift-only']
     unless node.run_list.expand(node.chef_environment).roles.include?("ha-controller1")||
@@ -48,6 +48,14 @@ node["ha"]["available_services"].each do |s, v|
     ip = IPAddr.new listen_ip
     if ! ip.ipv4?()
       Chef::Application.fatal!("vips.#{ns}-#{svc} is not an IPv4 address.")
+    end
+
+    if not vrid = rcb_safe_deref(node, "vips_config_#{listen_ip}_vrid","_")
+      Chef::Application.fatal! "You have not configured a VRID for the VIP.  Please set node[\"vips\"][\"config\"][\"#{listen_ip}\"][\"vrid\"]"
+    end
+
+    if not vip_network = rcb_safe_deref(node, "vips_config_#{listen_ip}_network","_")
+      Chef::Application.fatal! "You have not configured a network for the VIP.  Please set node[\"vips\"][\"config\"][\"#{listen_ip}\"][\"network\"]"
     end
 
     # make sure we have some back ends
@@ -71,7 +79,6 @@ node["ha"]["available_services"].each do |s, v|
         virtual_ipaddress Array(listen_ip)
         virtual_router_id router_id  # Needs to be a integer between 1..255
         track_script "haproxy"
-        notify_fault "#{haproxy_platform_options["service_bin"]} haproxy restart"
         notifies :restart, "service[keepalived]"
       end
 
@@ -151,7 +158,7 @@ node["ha"]["available_services"].each do |s, v|
         endpoint_publicurl public_endpoint["uri"]
         endpoint_internalurl internal_endpoint["uri"]
         endpoint_adminurl admin_endpoint['uri']
-        retries 4
+        retries 10
         retry_delay 5
         action :recreate_endpoint
       end

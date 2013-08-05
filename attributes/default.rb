@@ -1,3 +1,28 @@
+# mysql
+# default["vips"]["config"]["127.0.0.2"]["vrid"]=10
+
+# rabbitmq
+# default["vips"]["config"]["127.0.0.3"]["vrid"]=11
+
+#  all openstack services via haproxy
+# default["vips"]["config"]["127.0.0.4"]["network"]="management"
+# default["vips"]["config"]["127.0.0.4"]["vrid"]=12
+
+default["vips"]["mysql-db"] = nil
+default["vips"]["rabbitmq-queue"] = nil
+default["vips"]["horizon-dash"] = nil
+default["vips"]["horizon-dash_ssl"] = nil
+default["vips"]["keystone-service-api"] = nil
+default["vips"]["keystone-admin-api"] = nil
+default["vips"]["nova-xvpvnc-proxy"] = nil
+default["vips"]["nova-api"] = nil
+default["vips"]["nova-ec2-public"] = nil
+default["vips"]["nova-novnc-proxy"] = nil
+default["vips"]["glance-api"] = nil
+default["vips"]["glance-registry"] = nil
+default["vips"]["cinder-api"] = nil
+default["vips"]["quantum-api"] = nil
+
 default["ha"]["available_services"]["keystone-admin-api"] = {
     "role" => "keystone-api",
     "namespace" => "keystone",
@@ -6,9 +31,7 @@ default["ha"]["available_services"]["keystone-admin-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 12,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["keystone-service-api"] = {
     "role" => "keystone-api",
@@ -18,9 +41,7 @@ default["ha"]["available_services"]["keystone-service-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 13,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["nova-api"] = {
     "role" => "nova-api-os-compute",
@@ -30,9 +51,7 @@ default["ha"]["available_services"]["nova-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 14,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["nova-ec2-public"] = {
     "role" => "nova-api-ec2",
@@ -42,9 +61,7 @@ default["ha"]["available_services"]["nova-ec2-public"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 15,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["cinder-api"] = {
     "role" => "cinder-api",
@@ -54,9 +71,7 @@ default["ha"]["available_services"]["cinder-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 16,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["glance-api"] = {
     "role" => "glance-api",
@@ -66,9 +81,7 @@ default["ha"]["available_services"]["glance-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 17,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["swift-proxy"] = {
     "role" => "swift-proxy-server",
@@ -78,9 +91,7 @@ default["ha"]["available_services"]["swift-proxy"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 18,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["glance-registry"] = {
     "role" => "glance-registry",
@@ -90,9 +101,7 @@ default["ha"]["available_services"]["glance-registry"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 19,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["nova-novnc-proxy"] = {
     "role" => "nova-vncproxy",
@@ -102,9 +111,7 @@ default["ha"]["available_services"]["nova-novnc-proxy"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 20,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["nova-xvpvnc-proxy"] = {
     "role" => "nova-vncproxy",
@@ -114,9 +121,7 @@ default["ha"]["available_services"]["nova-xvpvnc-proxy"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 21,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["horizon-dash"] = {
     "role" => "horizon-server",
@@ -126,9 +131,7 @@ default["ha"]["available_services"]["horizon-dash"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 22,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["horizon-dash_ssl"] = {
     "role" => "horizon-server",
@@ -138,9 +141,7 @@ default["ha"]["available_services"]["horizon-dash_ssl"] = {
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
     "lb_options" => ["ssl-hello-chk"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 23,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["ceilometer-api"] = {
     "role" => "ceilometer-api",
@@ -150,9 +151,7 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
-    "ssl_lb_options" => ["ssl-hello-chk"],
-    "vrid" => 24,
-    "vip_network" => "public"
+    "ssl_lb_options" => ["ssl-hello-chk"]
 }
 
 if node["nova"]["network"]["provider"] == "quantum"
@@ -165,8 +164,6 @@ if node["nova"]["network"]["provider"] == "quantum"
         "lb_algorithm" => "roundrobin",
         "lb_options" => [],
         "ssl_lb_options" => ["ssl-hello-chk"],
-        "vrid" => 25,
-        "vip_network" => "public"
     }
 end
 
