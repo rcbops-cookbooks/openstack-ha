@@ -162,7 +162,7 @@ if node["nova"]["network"]["provider"] == "quantum"
         "service_type" => "network",
         "lb_mode" => "http",
         "lb_algorithm" => "roundrobin",
-        "lb_options" => [],
+        "lb_options" => ["forwardfor", "httpchk", "httplog"],
         "ssl_lb_options" => ["ssl-hello-chk"],
     }
 end
