@@ -85,6 +85,14 @@ node["ha"]["available_services"].each do |s, v|
       # now configure the virtual server
       Chef::Log.info("Configuring virtual_server for #{ns}-#{svc}")
 
+      if lb_opts.include?("activebackup")
+        active_backup = true
+        lb_opts = lb_opts.reject { |i| i == "activebackup" }
+      else
+        active_backup = false
+      end
+      Chef::Log.debug "active_backup is #{active_backup}"
+
       # Lookup listen_port from the environment, or fall back to the first searched node running the role
       listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
       scheme = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["scheme"] : get_realserver_endpoints(role, ns, svc)[0]["scheme"]
@@ -104,6 +112,7 @@ node["ha"]["available_services"].each do |s, v|
         vs_listen_ip listen_ip
         vs_listen_port listen_port.to_s
         real_servers rs_list
+        active_backup active_backup
       end
 
     else
