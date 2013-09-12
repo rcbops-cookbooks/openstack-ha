@@ -153,6 +153,14 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
+default["ha"]["available_services"]["memcached-cache"] = {
+    "role" => "memcached",
+    "namespace" => "memcached",
+    "service" => "cache",
+    "lb_mode" => "tcp",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["activebackup"]
+}
 
 if node["nova"]["network"]["provider"] == "quantum"
     default["ha"]["available_services"]["quantum-server"] = {
