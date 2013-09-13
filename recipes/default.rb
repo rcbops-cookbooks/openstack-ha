@@ -130,7 +130,7 @@ node["ha"]["available_services"].each do |s, v|
     Chef::Log.info("Skipping: #{ns}-#{svc}")
   end
 
-  endpoint_skip_list=['glance-registry','nova-xvpvnc-proxy','nova-novnc-proxy','horizon-dash','horizon-dash_ssl', 'memcached-cache']
+  endpoint_skip_list=['glance-registry','nova-xvpvnc-proxy','nova-novnc-proxy','horizon-dash','horizon-dash_ssl']
   #unless listen_ip.nil?
   if listen_ip and get_role_count(role) > 0
     # Need to update keystone endpoint
