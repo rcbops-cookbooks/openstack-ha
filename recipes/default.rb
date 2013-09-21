@@ -137,20 +137,31 @@ node["ha"]["available_services"].each do |s, v|
     case svc_type
     when "ec2"
       public_endpoint = get_access_endpoint(role, ns, "ec2-public")
+      if public_endpoint['name']
+        public_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['name']}:#{public_endpoint['port']}#{public_endpoint['path']}"
+      end
+      admin_endpoint = get_access_endpoint(role, ns, "ec2-public")
       admin_path = get_settings_by_role(role, ns)['services']['ec2-admin']['path']
-      admin_endpoint = {'uri' => "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}" }
+      admin_endpoint['uri'] = "#{admin_endpoint['scheme']}://#{admin_endpoint['host']}:#{admin_endpoint['port']}#{admin_path}"
       internal_endpoint = admin_endpoint.clone
     when "identity"
       public_endpoint = rcb_safe_deref(node, "#{ns}.services.service-api.uri") ? node[ns]["services"]["service-api"] : get_access_endpoint(role, ns, "service-api")
+      if public_endpoint['name']
+        public_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['name']}:#{public_endpoint['port']}#{public_endpoint['path']}"
+      end
+      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-api.uri") ? node[ns]["services"]["internal-api"] : get_access_endpoint(role, ns, "internal-api")
       admin_endpoint  = rcb_safe_deref(node, "#{ns}.services.admin-api.uri") ? node[ns]["services"]["admin-api"] : get_access_endpoint(role, ns, "admin-api")
-      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-api.uri") ? node[ns]["services"]["internal-api"] : admin_endpoint.clone
     else
       # ensure we use uri values for each endpoint type if they have been provided.  Else look them up
       # NOTE:(mancdaz) right now, unless you provide an override value for an endpoint type, it will use the
       # public endpoint.  This maintains current HA functionality.
+
       public_endpoint = rcb_safe_deref(node, "#{ns}.services.#{svc}.uri") ? node[ns]["services"][svc] : get_access_endpoint(role, ns, svc)
-      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-#{svc}.uri") ? node[ns]["services"]["internal-#{svc}"] : public_endpoint.clone
-      admin_endpoint = rcb_safe_deref(node, "#{ns}.services.admin-#{svc}.uri") ? node[ns]["services"]["admin-#{svc}"] : public_endpoint.clone
+      if public_endpoint['name']
+        public_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['name']}:#{public_endpoint['port']}#{public_endpoint['path']}"
+      end
+      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-#{svc}.uri") ? node[ns]["services"]["internal-#{svc}"] : get_access_endpoint(role, ns, svc)
+      admin_endpoint = rcb_safe_deref(node, "#{ns}.services.admin-#{svc}.uri") ? node[ns]["services"]["admin-#{svc}"] : internal_endpoint.clone
     end
 
     if endpoint_skip_list.include? "#{ns}-#{svc}"
@@ -166,7 +177,7 @@ node["ha"]["available_services"].each do |s, v|
         endpoint_region node["nova"]["compute"]["region"]
         endpoint_publicurl public_endpoint["uri"]
         endpoint_internalurl internal_endpoint["uri"]
-        endpoint_adminurl admin_endpoint['uri']
+        endpoint_adminurl admin_endpoint["uri"]
         retries 10
         retry_delay 5
         action :recreate_endpoint
