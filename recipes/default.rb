@@ -112,7 +112,6 @@ node["ha"]["available_services"].each do |s, v|
         next
      end
 
-      Log.info "openstack-ha: creating virtual_server #{ns}-#{svc}"
       haproxy_virtual_server "#{ns}-#{svc}" do
         lb_algo lb_algo
         mode lb_mode
