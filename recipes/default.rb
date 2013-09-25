@@ -105,6 +105,14 @@ node["ha"]["available_services"].each do |s, v|
       rs_list.sort!
       Chef::Log.debug "realserver list is #{rs_list}"
 
+      # if we're processing the keystone-internal-api and see that it's using
+      # the same ip and port as the service-api then skip setting up a separate
+      # internal-api virtual_server
+      if "#{ns}-#{svc}" == "keystone-internal-api" && node["vips"]["keystone-service-api"] == node["vips"]["keystone-internal-api"] && node["keystone"]["services"]["service-api"]["port"] == node["keystone"]["services"]["internal-api"]["port"]
+        next
+     end
+
+      Log.info "openstack-ha: creating virtual_server #{ns}-#{svc}"
       haproxy_virtual_server "#{ns}-#{svc}" do
         lb_algo lb_algo
         mode lb_mode
