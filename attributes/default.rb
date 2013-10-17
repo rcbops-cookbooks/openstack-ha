@@ -43,6 +43,16 @@ default["ha"]["available_services"]["keystone-service-api"] = {
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
+default["ha"]["available_services"]["keystone-internal-api"] = {
+    "role" => "keystone-api",
+    "namespace" => "keystone",
+    "service" => "internal-api",
+    "service_type" => "identity",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
 default["ha"]["available_services"]["nova-api"] = {
     "role" => "nova-api-os-compute",
     "namespace" => "nova",
