@@ -21,7 +21,7 @@ default["vips"]["nova-novnc-proxy"] = nil
 default["vips"]["glance-api"] = nil
 default["vips"]["glance-registry"] = nil
 default["vips"]["cinder-api"] = nil
-default["vips"]["quantum-api"] = nil
+default["vips"]["neutron-api"] = nil
 
 default["ha"]["available_services"]["keystone-admin-api"] = {
     "role" => "keystone-api",
@@ -164,10 +164,10 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
 
-if node["nova"]["network"]["provider"] == "quantum"
-    default["ha"]["available_services"]["quantum-server"] = {
+if node["nova"]["network"]["provider"] == "neutron"
+    default["ha"]["available_services"]["neutron-server"] = {
         "role" => "nova-network-controller",
-        "namespace" => "quantum",
+        "namespace" => "neutron",
         "service" => "api",
         "service_type" => "network",
         "lb_mode" => "http",
