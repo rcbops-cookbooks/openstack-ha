@@ -65,6 +65,7 @@ node["ha"]["available_services"].each do |s, v|
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
       vrrp_interface = get_if_for_net(vip_network, node)
+      src_ip = get_ip_for_net(vip_network, node)
       router_id = vrid
 
       keepalived_chkscript "haproxy" do
@@ -76,9 +77,12 @@ node["ha"]["available_services"].each do |s, v|
 
       keepalived_vrrp vrrp_name do
         interface vrrp_interface
-        virtual_ipaddress Array(listen_ip)
         virtual_router_id router_id  # Needs to be a integer between 1..255
         track_script "haproxy"
+        notify_master "/etc/keepalived/notify.sh haproxy #{vrrp_interface} #{listen_ip} #{src_ip}"
+        notify_backup "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip}"
+        notify_fault "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip}"
+        notify_stop "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip}"
         notifies :restart, "service[keepalived]"
       end
 
