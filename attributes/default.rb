@@ -22,6 +22,20 @@ default["vips"]["glance-api"] = nil
 default["vips"]["glance-registry"] = nil
 default["vips"]["cinder-api"] = nil
 default["vips"]["neutron-api"] = nil
+default["vips"]["ceilometer-api"] = nil
+default["vips"]["ceilometer-central-agent"] = nil
+default["vips"]["heat-api"] = nil
+default["vips"]["heat-api-cfn"] = nil
+default["vips"]["heat-api-cloudwatch"] = nil
+
+# List of services we want to ignore when creating keystone endpoints
+default["ha"]["service_ignore_list"] = ['glance-registry',
+                                        'nova-xvpvnc-proxy', 
+                                        'nova-novnc-proxy',
+                                        'horizon-dash', 
+                                        'horizon-dash_ssl', 
+                                        'heat-api-cloudwatch',
+                                        'ceilometer-central-agent']
 
 default["ha"]["available_services"]["keystone-admin-api"] = {
     "role" => "keystone-api",
@@ -163,6 +177,47 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
+default["ha"]["available_services"]["ceilometer-central-agent"] = {
+    "role" => "ceilometer-central-agent",
+    "namespace" => "ceilometer-central",
+    "service" => "agent",
+    "service_type" => "central-agent",
+    "lb_mode" => "tcp",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
+default["ha"]["available_services"]["heat-api"] = {
+    "role" => "heat-api",
+    "namespace" => "heat",
+    "service" => "api",
+    "service_type" => "orchestration",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
+default["ha"]["available_services"]["heat-api-cfn"] = {
+    "role" => "heat-api-cfn",
+    "namespace" => "heat-cfn",
+    "service" => "api",
+    "service_type" => "cloudformation",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
+default["ha"]["available_services"]["heat-api-cloudwatch"] = {
+    "role" => "heat-api-cloudwatch",
+    "namespace" => "heat-cloudwatch",
+    "service" => "heat-api-cloudwatch",
+    "service_type" => "cloudwatch",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
+
 
 if node["nova"]["network"]["provider"] == "neutron"
     default["ha"]["available_services"]["neutron-server"] = {
