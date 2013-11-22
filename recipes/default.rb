@@ -75,6 +75,8 @@ node["ha"]["available_services"].each do |s, v|
         not_if {File.exists?('/etc/keepalived/conf.d/script_haproxy.conf')}
       end
 
+      # restart the keepalived service immediately so the new VIPs config gets
+      # added and we can consume the API services
       keepalived_vrrp vrrp_name do
         interface vrrp_interface
         virtual_router_id router_id  # Needs to be a integer between 1..255
@@ -83,7 +85,7 @@ node["ha"]["available_services"].each do |s, v|
         notify_backup "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip}"
         notify_fault "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip}"
         notify_stop "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip}"
-        notifies :restart, "service[keepalived]"
+        notifies :restart, "service[keepalived]", :immediately
       end
 
       # now configure the virtual server
