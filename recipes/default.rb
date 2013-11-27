@@ -188,7 +188,7 @@ node["ha"]["available_services"].each do |s, v|
         api_ver ks_admin_endpoint["path"]
         auth_token keystone["admin_token"]
         service_type svc_type
-        endpoint_region node["nova"]["compute"]["region"]
+        endpoint_region node["osops"]["region"]
         endpoint_publicurl public_endpoint["uri"]
         endpoint_internalurl internal_endpoint["uri"]
         endpoint_adminurl admin_endpoint["uri"]
