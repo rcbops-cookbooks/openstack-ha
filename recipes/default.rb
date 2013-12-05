@@ -65,6 +65,8 @@ node["ha"]["available_services"].each do |s, v|
       Chef::Log.info("Configuring vrrp for #{ns}-#{svc}")
       vrrp_name = "vi_#{listen_ip.gsub(/\./, '_')}"
       vrrp_interface = get_if_for_net(vip_network, node)
+      mgmt_ip = get_ip_for_net(vip_network, node)
+      src_ip = node["apipa"]
       router_id = vrid
 
       keepalived_chkscript "haproxy" do
@@ -74,12 +76,17 @@ node["ha"]["available_services"].each do |s, v|
         not_if {File.exists?('/etc/keepalived/conf.d/script_haproxy.conf')}
       end
 
+      # restart the keepalived service immediately so the new VIPs config gets
+      # added and we can consume the API services
       keepalived_vrrp vrrp_name do
         interface vrrp_interface
-        virtual_ipaddress Array(listen_ip)
         virtual_router_id router_id  # Needs to be a integer between 1..255
         track_script "haproxy"
-        notifies :restart, "service[keepalived]"
+        notify_master "/etc/keepalived/notify.sh haproxy #{vrrp_interface} #{listen_ip} #{src_ip} #{mgmt_ip}"
+        notify_backup "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip} #{mgmt_ip}"
+        notify_fault "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip} #{mgmt_ip}"
+        notify_stop "/etc/keepalived/notify.sh del #{vrrp_interface} #{listen_ip} #{src_ip} #{mgmt_ip}"
+        notifies :restart, "service[keepalived]", :immediately
       end
 
       # now configure the virtual server
@@ -105,11 +112,18 @@ node["ha"]["available_services"].each do |s, v|
       rs_list.sort!
       Chef::Log.debug "realserver list is #{rs_list}"
 
+      # if we're processing the keystone-internal-api and see that it's using
+      # the same ip and port as the service-api then skip setting up a separate
+      # internal-api virtual_server
+      if "#{ns}-#{svc}" == "keystone-internal-api" && node["vips"]["keystone-service-api"] == node["vips"]["keystone-internal-api"] && node["keystone"]["services"]["service-api"]["port"] == node["keystone"]["services"]["internal-api"]["port"]
+        next
+     end
+
       haproxy_virtual_server "#{ns}-#{svc}" do
         lb_algo lb_algo
         mode lb_mode
         options lb_opts
-        vs_listen_ip listen_ip
+        vs_listen_ip src_ip
         vs_listen_port listen_port.to_s
         real_servers rs_list
         active_backup active_backup
@@ -137,20 +151,31 @@ node["ha"]["available_services"].each do |s, v|
     case svc_type
     when "ec2"
       public_endpoint = get_access_endpoint(role, ns, "ec2-public")
+      if public_endpoint['name']
+        public_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['name']}:#{public_endpoint['port']}#{public_endpoint['path']}"
+      end
+      admin_endpoint = get_access_endpoint(role, ns, "ec2-public")
       admin_path = get_settings_by_role(role, ns)['services']['ec2-admin']['path']
-      admin_endpoint = {'uri' => "#{public_endpoint['scheme']}://#{public_endpoint['host']}:#{public_endpoint['port']}#{admin_path}" }
+      admin_endpoint['uri'] = "#{admin_endpoint['scheme']}://#{admin_endpoint['host']}:#{admin_endpoint['port']}#{admin_path}"
       internal_endpoint = admin_endpoint.clone
     when "identity"
       public_endpoint = rcb_safe_deref(node, "#{ns}.services.service-api.uri") ? node[ns]["services"]["service-api"] : get_access_endpoint(role, ns, "service-api")
+      if public_endpoint['name']
+        public_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['name']}:#{public_endpoint['port']}#{public_endpoint['path']}"
+      end
+      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-api.uri") ? node[ns]["services"]["internal-api"] : get_access_endpoint(role, ns, "internal-api")
       admin_endpoint  = rcb_safe_deref(node, "#{ns}.services.admin-api.uri") ? node[ns]["services"]["admin-api"] : get_access_endpoint(role, ns, "admin-api")
-      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-api.uri") ? node[ns]["services"]["internal-api"] : admin_endpoint.clone
     else
       # ensure we use uri values for each endpoint type if they have been provided.  Else look them up
       # NOTE:(mancdaz) right now, unless you provide an override value for an endpoint type, it will use the
       # public endpoint.  This maintains current HA functionality.
+
       public_endpoint = rcb_safe_deref(node, "#{ns}.services.#{svc}.uri") ? node[ns]["services"][svc] : get_access_endpoint(role, ns, svc)
-      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-#{svc}.uri") ? node[ns]["services"]["internal-#{svc}"] : public_endpoint.clone
-      admin_endpoint = rcb_safe_deref(node, "#{ns}.services.admin-#{svc}.uri") ? node[ns]["services"]["admin-#{svc}"] : public_endpoint.clone
+      if public_endpoint['name']
+        public_endpoint['uri'] = "#{public_endpoint['scheme']}://#{public_endpoint['name']}:#{public_endpoint['port']}#{public_endpoint['path']}"
+      end
+      internal_endpoint = rcb_safe_deref(node, "#{ns}.services.internal-#{svc}.uri") ? node[ns]["services"]["internal-#{svc}"] : get_access_endpoint(role, ns, svc)
+      admin_endpoint = rcb_safe_deref(node, "#{ns}.services.admin-#{svc}.uri") ? node[ns]["services"]["admin-#{svc}"] : internal_endpoint.clone
     end
 
     if endpoint_skip_list.include? "#{ns}-#{svc}"
@@ -166,7 +191,7 @@ node["ha"]["available_services"].each do |s, v|
         endpoint_region node["nova"]["compute"]["region"]
         endpoint_publicurl public_endpoint["uri"]
         endpoint_internalurl internal_endpoint["uri"]
-        endpoint_adminurl admin_endpoint['uri']
+        endpoint_adminurl admin_endpoint["uri"]
         retries 10
         retry_delay 5
         action :recreate_endpoint

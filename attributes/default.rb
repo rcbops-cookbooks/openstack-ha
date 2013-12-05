@@ -8,6 +8,8 @@
 # default["vips"]["config"]["127.0.0.4"]["network"]="management"
 # default["vips"]["config"]["127.0.0.4"]["vrid"]=12
 
+default["apipa"] = "169.254.123.1"
+
 default["vips"]["mysql-db"] = nil
 default["vips"]["rabbitmq-queue"] = nil
 default["vips"]["horizon-dash"] = nil
@@ -37,6 +39,16 @@ default["ha"]["available_services"]["keystone-service-api"] = {
     "role" => "keystone-api",
     "namespace" => "keystone",
     "service" => "service-api",
+    "service_type" => "identity",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
+default["ha"]["available_services"]["keystone-internal-api"] = {
+    "role" => "keystone-api",
+    "namespace" => "keystone",
+    "service" => "internal-api",
     "service_type" => "identity",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
