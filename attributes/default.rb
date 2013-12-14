@@ -174,9 +174,9 @@ default["ha"]["available_services"]["ceilometer-api"] = {
     "namespace" => "ceilometer",
     "service" => "api",
     "service_type" => "metering",
-    "lb_mode" => "http",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "lb_mode" => "tcp",
+    "lb_algorithm" => "source",
+    "lb_options" => [],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["ceilometer-central-agent"] = {
@@ -185,8 +185,8 @@ default["ha"]["available_services"]["ceilometer-central-agent"] = {
     "service" => "central",
     "service_type" => "metering",
     "lb_mode" => "tcp",
-    "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "lb_algorithm" => "source",
+    "lb_options" => [],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["heat-api"] = {
