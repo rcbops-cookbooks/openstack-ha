@@ -18,6 +18,7 @@ default["vips"]["keystone-service-api"] = nil
 default["vips"]["keystone-admin-api"] = nil
 default["vips"]["nova-xvpvnc-proxy"] = nil
 default["vips"]["nova-api"] = nil
+default["vips"]["nova-api-metadata"] = nil
 default["vips"]["nova-ec2-public"] = nil
 default["vips"]["nova-novnc-proxy"] = nil
 default["vips"]["glance-api"] = nil
@@ -32,6 +33,7 @@ default["vips"]["heat-api-cloudwatch"] = nil
 
 # List of services we want to ignore when creating keystone endpoints
 default["ha"]["service_ignore_list"] = ['glance-registry',
+                                        'nova-api-metadata',
                                         'nova-xvpvnc-proxy', 
                                         'nova-novnc-proxy',
                                         'horizon-dash', 
@@ -74,6 +76,16 @@ default["ha"]["available_services"]["nova-api"] = {
     "namespace" => "nova",
     "service" => "api",
     "service_type" => "compute",
+    "lb_mode" => "http",
+    "lb_algorithm" => "roundrobin",
+    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "ssl_lb_options" => ["ssl-hello-chk"]
+}
+default["ha"]["available_services"]["nova-api-metadata"] = {
+    "role" => "nova-api-metadata",
+    "namespace" => "nova",
+    "service" => "api-metadata",
+    "service_type" => "metadata",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
     "lb_options" => ["forwardfor", "httpchk", "httplog"],
