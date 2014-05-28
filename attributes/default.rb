@@ -17,7 +17,6 @@ default["vips"]["horizon-dash_ssl"] = nil
 default["vips"]["keystone-service-api"] = nil
 default["vips"]["keystone-admin-api"] = nil
 default["vips"]["keystone-internal-api"] = nil
-default["vips"]["nova-xvpvnc-proxy"] = nil
 default["vips"]["nova-api"] = nil
 default["vips"]["nova-api-metadata"] = nil
 default["vips"]["nova-ec2-public"] = nil
@@ -35,7 +34,6 @@ default["vips"]["heat-api-cloudwatch"] = nil
 # List of services we want to ignore when creating keystone endpoints
 default["ha"]["service_ignore_list"] = ['glance-registry',
                                         'nova-api-metadata',
-                                        'nova-xvpvnc-proxy',
                                         'nova-novnc-proxy',
                                         'horizon-dash',
                                         'horizon-dash_ssl',
@@ -146,16 +144,6 @@ default["ha"]["available_services"]["nova-novnc-proxy"] = {
     "role" => "nova-vncproxy",
     "namespace" => "nova",
     "service" => "novnc-proxy",
-    "service_type" => "compute",
-    "lb_mode" => "tcp",
-    "lb_algorithm" => "source",
-    "lb_options" => [],
-    "ssl_lb_options" => ["ssl-hello-chk"]
-}
-default["ha"]["available_services"]["nova-xvpvnc-proxy"] = {
-    "role" => "nova-vncproxy",
-    "namespace" => "nova",
-    "service" => "xvpvnc-proxy",
     "service_type" => "compute",
     "lb_mode" => "tcp",
     "lb_algorithm" => "source",
