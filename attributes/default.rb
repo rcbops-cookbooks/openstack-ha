@@ -87,7 +87,7 @@ default["ha"]["available_services"]["nova-api-metadata"] = {
     "service_type" => "metadata",
     "lb_mode" => "http",
     "lb_algorithm" => "roundrobin",
-    "lb_options" => ["forwardfor", "httpchk", "httplog"],
+    "lb_options" => ["httpchk", "httplog"],
     "ssl_lb_options" => ["ssl-hello-chk"]
 }
 default["ha"]["available_services"]["nova-ec2-public"] = {
